@@ -1,0 +1,21 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "description": "recipe application",
+  "default": "index.html",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --dist-dir ./dist"
+  },
+  "author": "deep gondaliya",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.13.3",
+    "sass": "^1.83.4"
+  },
+  "dependencies": {
+    "core-js": "^3.40.0",
+    "fractional": "^1.0.0",
+    "regenerator-runtime": "^0.14.1"
+  }
+}
