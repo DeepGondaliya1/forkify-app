@@ -75,7 +75,11 @@ export const getSearchResultsPage = function (page = state.search.page) {
   const start = (page - 1) * state.search.resultsPerPage; // 0
   const end = page * state.search.resultsPerPage; // 9
 
-  return state.search.results.slice(start, end);
+  // Flag results that are already bookmarked so the list can show it
+  return state.search.results.slice(start, end).map(result => ({
+    ...result,
+    bookmarked: state.bookmarks.some(bookmark => bookmark.id === result.id),
+  }));
 };
 
 export const updateServings = function (newServings) {

@@ -46,22 +46,29 @@ const controlSearchResults = async function () {
     // 2) Load search results
     await model.loadSearchResults(query);
 
-    // 3) Render results
+    // 3) Render results and the summary line
     resultsView.render(model.getSearchResultsPage());
+    resultsView.renderSummary(model.state.search);
 
     // 4) Render initial pagination buttons
     paginationView.render(model.state.search);
   } catch (err) {
-    console.log(err);
+    resultsView.renderError();
+    paginationView.render({ results: [], page: 1, resultsPerPage: 1 });
+    console.error(err);
   }
 };
 
 const controlPagination = function (goToPage) {
-  // 1) Render NEW results
+  // 1) Render NEW results and summary
   resultsView.render(model.getSearchResultsPage(goToPage));
+  resultsView.renderSummary(model.state.search);
 
   // 2) Render NEW pagination buttons
   paginationView.render(model.state.search);
+
+  // 3) Bring the top of the new page into view
+  resultsView.scrollToTop();
 };
 
 const controlServings = function (newServings) {
@@ -82,6 +89,10 @@ const controlAddBookmark = function () {
 
   // 3) Render bookmarks
   bookmarksView.render(model.state.bookmarks);
+
+  // 4) Reflect the bookmark state in the search results list
+  if (model.state.search.results.length)
+    resultsView.update(model.getSearchResultsPage());
 };
 
 const controlBookmarks = function () {

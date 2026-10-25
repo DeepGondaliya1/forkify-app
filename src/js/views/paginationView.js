@@ -14,64 +14,53 @@ class PaginationView extends View {
     });
   }
 
+  _generateMarkupButton(page, direction) {
+    const isNext = direction === 'next';
+    return `
+      <button data-goto="${page}"
+        class="btn--inline pagination__btn pagination__btn--${direction}"
+        aria-label="Go to page ${page}">
+        ${
+          isNext
+            ? ''
+            : `<svg class="search__icon"><use href="${icons}#icon-arrow-left"></use></svg>`
+        }
+        <span>${isNext ? 'Next' : 'Previous'}</span>
+        ${
+          isNext
+            ? `<svg class="search__icon"><use href="${icons}#icon-arrow-right"></use></svg>`
+            : ''
+        }
+      </button>
+    `;
+  }
+
   _generateMarkup() {
     const curPage = this._data.page;
     const numPages = Math.ceil(
       this._data.results.length / this._data.resultsPerPage
     );
 
-    // Page 1, and there are other pages
-    if (curPage === 1 && numPages > 1) {
-      return `
-        <button data-goto="${
-          curPage + 1
-        }" class="btn--inline pagination__btn--next">
-          <span>Page ${curPage + 1}</span>
-          <svg class="search__icon">
-            <use href="${icons}#icon-arrow-right"></use>
-          </svg>
-        </button>
-      `;
-    }
+    // Only one page: no pagination needed
+    if (numPages <= 1) return '';
 
-    // Last page
-    if (curPage === numPages && numPages > 1) {
-      return `
-        <button data-goto="${
-          curPage - 1
-        }" class="btn--inline pagination__btn--prev">
-          <svg class="search__icon">
-            <use href="${icons}#icon-arrow-left"></use>
-          </svg>
-          <span>Page ${curPage - 1}</span>
-        </button>
-      `;
-    }
+    const prev =
+      curPage > 1
+        ? this._generateMarkupButton(curPage - 1, 'prev')
+        : '<span class="pagination__spacer"></span>';
 
-    // Other page
-    if (curPage < numPages) {
-      return `
-        <button data-goto="${
-          curPage - 1
-        }" class="btn--inline pagination__btn--prev">
-          <svg class="search__icon">
-            <use href="${icons}#icon-arrow-left"></use>
-          </svg>
-          <span>Page ${curPage - 1}</span>
-        </button>
-        <button data-goto="${
-          curPage + 1
-        }" class="btn--inline pagination__btn--next">
-          <span>Page ${curPage + 1}</span>
-          <svg class="search__icon">
-            <use href="${icons}#icon-arrow-right"></use>
-          </svg>
-        </button>
-      `;
-    }
+    const next =
+      curPage < numPages
+        ? this._generateMarkupButton(curPage + 1, 'next')
+        : '<span class="pagination__spacer"></span>';
 
-    // Page 1, and there are NO other pages
-    return '';
+    return `
+      ${prev}
+      <p class="pagination__status" aria-live="polite">
+        Page <strong>${curPage}</strong> of ${numPages}
+      </p>
+      ${next}
+    `;
   }
 }
 
